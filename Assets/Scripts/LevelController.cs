@@ -1,12 +1,13 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class LevelController : MonoBehaviour {
 
 	public static float ITEM_WIDTH = 0.7f;
-	public static float ADJUSTMENT = 0.295f;
+	//public static float ADJUSTMENT = 0.295f;
     //4 = ?
     //5 = ?
-    //6 = 0.295
+    //6 = adjust: 0.295, pos: -1.77
     //7 = ?
     //8 = 0.31
 
@@ -46,22 +47,17 @@ public class LevelController : MonoBehaviour {
 		case 1:
 			obj = Resources.Load<GameObject> ("Prefabs/Player/player_fighter");
 			break;
-		case 2:
-			obj = Resources.Load<GameObject> ("Prefabs/Player/player_bowman");
-			break;
 		case 11:
 			obj = Resources.Load<GameObject> ("Prefabs/Enemy/enemy_fighter");
 			break;
-		case 12:
-			obj = Resources.Load<GameObject> ("Prefabs/Enemy/enemy_bowman");
-			break;
 		default:
-			obj = Resources.Load<GameObject> ("Prefabs/Other/civilian");
+			obj = Resources.Load<GameObject> ("Prefabs/Other/blank");
 			break;
 		}
 
-		Unit newUnit = ((GameObject) Instantiate(obj, 
-			new Vector3(x * ITEM_WIDTH - bttlFld.XSize * ADJUSTMENT, y), Quaternion.identity)).GetComponent<Unit>();
+        float posX = InitPosX() + (x * ITEM_WIDTH);
+        float posY = InitPosY() + (y * ITEM_WIDTH);
+		Unit newUnit = ((GameObject) Instantiate(obj, new Vector3(posX, posY), Quaternion.identity)).GetComponent<Unit>();
 		newUnit.OnItemPositionChanged (x, y);
 
 		return newUnit;
@@ -69,25 +65,11 @@ public class LevelController : MonoBehaviour {
 
     public void CreateBlankUnit(Unit unit)
     {
-        GameObject obj = Resources.Load<GameObject>("Prefabs/Other/civilian");
+        GameObject obj = Resources.Load<GameObject>("Prefabs/Other/blank");
         Unit blank = ((GameObject)Instantiate(obj, unit.transform.position, Quaternion.identity)).GetComponent<Unit>();
         blank.OnItemPositionChanged(unit.X, unit.Y);
 
         bttlFld.Grid[unit.X, unit.Y] = blank;
-    }
-
-    public void UpdateBattlefield()
-    {
-        for (int x = 0; x < bttlFld.XSize; x++)
-        {
-            for (int y = 0; y < bttlFld.YSize; y++)
-            {
-                if (bttlFld.Grid[x,y] == null)
-                {
-                    InstantiateUnit(0, x, y);
-                }
-            }
-        }
     }
 
 	private int [,] GetGrid8x8() {
@@ -113,5 +95,29 @@ public class LevelController : MonoBehaviour {
 			{1,0,0,0,0,11},
 		};
 	}
+
+    //TODO Temporary. I need a better method to align components on screen
+    private float InitPosX()
+    {
+        float value = -1.77f;
+        switch(this.bttlFld.XSize)
+        {
+            case 4:
+            case 5:
+            case 6:
+                value = -1.77f;
+                break;
+            case 7:
+            case 8:
+                value = -2.45f;
+                break;
+        }
+        return value;
+    }
+
+    private float InitPosY()
+    {
+        return -1.4f;
+    }
 
 }

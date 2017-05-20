@@ -54,7 +54,6 @@ public class MovementController : MonoBehaviour {
 		return false;
 	}
 
-
     /// <summary>
     /// Start the movement with selected units
     /// </summary>
@@ -64,16 +63,10 @@ public class MovementController : MonoBehaviour {
     {
         Debug.Log("Executing movement!");
 
-        //Disable all rigidbodys
-        ChangeRigidbodySatus(false);
-
         for (int step = 0; step < selected.NumberOfSteps; step++) {
             StartCoroutine(ExecuteStep(step, units));
             yield return new WaitForSeconds(STEP_DURATION);
         }
-
-        //Enable all rigidbodys
-        ChangeRigidbodySatus(true);
 
         //Destroy the used movement object
         Destroy (selected.gameObject);
@@ -107,20 +100,8 @@ public class MovementController : MonoBehaviour {
                 yield return StartCoroutine( selected.DoStep(step, units[i], this.levelController.BattleField, STEP_DURATION) );
             }
 
-            //Debug.Log("Updating battlefield");
-            //this.levelController.UpdateBattlefield();
             //TODO Check if unit is alive
             //units[i].DestroyIfKilled(bttlFld);
         }
     }
-
-    //Enables/disables rigidbody's kinematic
-    void ChangeRigidbodySatus(bool status)
-    {
-        foreach (Unit item in this.levelController.BattleField.Grid)
-        {
-            item.GetComponent<Rigidbody2D>().isKinematic = !status;
-        }
-    }
-
 }

@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour {
 
 	private const float MOVEMENT_DURATION = 0.1f;
 	private const float DELAY_BETWEEN_MATCHES = 0.1f;
+    private const int DEFAULT_UNIT_SELECTION_LIMIT = 3;
 
 	[SerializeField] private MovementController movementController;
 	[SerializeField] private LevelController levelController;
@@ -26,15 +27,14 @@ public class GameManager : MonoBehaviour {
 		//Initialize control variables
 		this.canPlay = true;
 		this.canMove = false;
-		this.selectedUnits = new Unit[3];
+		this.selectedUnits = new Unit[DEFAULT_UNIT_SELECTION_LIMIT];
 		this.player = new PlayerInfo();
 
 		//Create battlefield
 		this.levelController.LoadLevel (this.player.LevelNumber);
 
 		//Load movements
-		this.movementController.LoadMovements(this.player.LevelNumber);
-        Debug.Log("A");
+		this.movementController.LoadMovements (this.player.LevelNumber);
 
 		//Assign events
 		Unit.OnMouseOverItemEventHandler += OnMouseOverItem;
@@ -50,9 +50,9 @@ public class GameManager : MonoBehaviour {
 	void Update () {
 		if (canPlay && this.canMove) {
 			//Execute movement with selected units
-			this.movementController.MoveUnits (this.selectedUnits);
+			this.movementController.MoveUnits (this.selectedUnits, this.levelController.BattleField);
 			//Clear selected units
-			this.selectedUnits = new Unit[3];
+			this.selectedUnits = new Unit[DEFAULT_UNIT_SELECTION_LIMIT];
 			//Disable movement
 			this.canMove = false;
 		}

@@ -1,18 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class LevelController : MonoBehaviour {
 
 	public static float ITEM_WIDTH = 0.7f;
 	public static float ADJUSTMENT = 0.295f;
-	//4 = ?
-	//5 = ?
-	//6 = 0.295
-	//7 = ?
-	//8 = 0.31
+    //4 = ?
+    //5 = ?
+    //6 = 0.295
+    //7 = ?
+    //8 = 0.31
 
-	private Unit[,] grid;
+    private Battlefield bttlFld;
+
+    public Battlefield BattleField
+    {
+        get { return bttlFld; }
+    }
 
 	public void LoadLevel(int levelNumber) {
 
@@ -24,18 +27,18 @@ public class LevelController : MonoBehaviour {
 			model = GetGrid8x8 ();
 		}
 
-		grid = new Unit[model.GetLength(0), model.GetLength(1)];
+		bttlFld = new Battlefield(model.GetLength(0), model.GetLength(1));
 
-		for (int x = 0; x < model.GetLength(0); x++) {			
-			for (int y = 0; y < model.GetLength(1); y++) {
-				//Instantiates a crystal in (x, y) position
-				grid [x, y] = InstantiateCharacter (x, y, model[x,y], model.GetLength(0));
+		for (int x = 0; x < bttlFld.XSize; x++) {			
+			for (int y = 0; y < bttlFld.YSize; y++) {
+				//Instantiate unit in (x, y) position
+				bttlFld.AddUnit(InstantiateCharacter (model[x, y], x, y, bttlFld.XSize));
 			}
 		}
 	}
 
 	//Instantiates a new unit at the position
-	private Unit InstantiateCharacter (int x, int y, int charId, int xSize) {
+	private Unit InstantiateCharacter (int charId, int x, int y, int xSize) {
 
 		GameObject obj = null;
 

@@ -1,0 +1,11 @@
+﻿
+public enum WarriorEnum {
+	GHOST,
+	CIVILIAN,
+	FIGHTER,
+	BOWMAN,
+	GUARDIAN,
+	SORCERER,
+	SHAMAN,
+	RIDER
+}

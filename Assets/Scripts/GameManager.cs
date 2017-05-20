@@ -49,8 +49,9 @@ public class GameManager : MonoBehaviour {
 
 	void Update () {
 		if (canPlay && this.canMove) {
-			//Execute movement with selected units
-			this.movementController.MoveUnits (this.selectedUnits, this.levelController.BattleField);
+            //Execute movement with selected units
+            StartCoroutine(this.movementController.MoveUnits(this.selectedUnits));
+			
 			//Clear selected units
 			this.selectedUnits = new Unit[DEFAULT_UNIT_SELECTION_LIMIT];
 			//Disable movement
@@ -76,8 +77,8 @@ public class GameManager : MonoBehaviour {
 		*/
 	}
 
-	//Unit selection
-	void OnMouseOverItem(Unit item) {
+    //Unit selection
+    void OnMouseOverItem(Unit item) {
 		//Enemy unit selected...
 		if (item.side == SideEnum.ENEMY) {
 			Debug.LogError ("Hey, você não pode comandar unidades inimigas!");

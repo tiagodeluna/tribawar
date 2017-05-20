@@ -32,13 +32,13 @@ public class LevelController : MonoBehaviour {
 		for (int x = 0; x < bttlFld.XSize; x++) {			
 			for (int y = 0; y < bttlFld.YSize; y++) {
 				//Instantiate unit in (x, y) position
-				bttlFld.AddUnit(InstantiateCharacter (model[x, y], x, y, bttlFld.XSize));
+				bttlFld.AddUnit(InstantiateUnit (model[x, y], x, y));
 			}
 		}
 	}
 
 	//Instantiates a new unit at the position
-	private Unit InstantiateCharacter (int charId, int x, int y, int xSize) {
+	private Unit InstantiateUnit (int charId, int x, int y) {
 
 		GameObject obj = null;
 
@@ -60,12 +60,35 @@ public class LevelController : MonoBehaviour {
 			break;
 		}
 
-		Unit character = ((GameObject) Instantiate(obj, 
-			new Vector3(x * ITEM_WIDTH - xSize*ADJUSTMENT, y), Quaternion.identity)).GetComponent<Unit>();
-		character.OnItemPositionChanged (x, y);
+		Unit newUnit = ((GameObject) Instantiate(obj, 
+			new Vector3(x * ITEM_WIDTH - bttlFld.XSize * ADJUSTMENT, y), Quaternion.identity)).GetComponent<Unit>();
+		newUnit.OnItemPositionChanged (x, y);
 
-		return character;
+		return newUnit;
 	}
+
+    public void CreateBlankUnit(Unit unit)
+    {
+        GameObject obj = Resources.Load<GameObject>("Prefabs/Other/civilian");
+        Unit blank = ((GameObject)Instantiate(obj, unit.transform.position, Quaternion.identity)).GetComponent<Unit>();
+        blank.OnItemPositionChanged(unit.X, unit.Y);
+
+        bttlFld.Grid[unit.X, unit.Y] = blank;
+    }
+
+    public void UpdateBattlefield()
+    {
+        for (int x = 0; x < bttlFld.XSize; x++)
+        {
+            for (int y = 0; y < bttlFld.YSize; y++)
+            {
+                if (bttlFld.Grid[x,y] == null)
+                {
+                    InstantiateUnit(0, x, y);
+                }
+            }
+        }
+    }
 
 	private int [,] GetGrid8x8() {
 		return new int[,] {

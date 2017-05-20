@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class Movement : MonoBehaviour {
 
@@ -40,30 +41,24 @@ public class Movement : MonoBehaviour {
         actions[3] = action4;
     }
 
-    public bool DoStep(int step, Unit unit, Battlefield bttlFld)
+    public IEnumerator DoStep(int step, Unit unit, Battlefield bttlFld, float duration)
     {
-        //Move unit
-        Unit target = null;
+        //Obtain target position
+        Unit target = bttlFld.GetUnitAt(unit, steps[step]);
 
-        if (steps[step] == DirectionEnum.TOP)
+        if (target != null)
         {
-            target = bttlFld.GetUnitAt(unit.X, unit.Y + 1);
-        }
-        else if (steps[step] == DirectionEnum.RIGHT)
-        {
-            target = bttlFld.GetUnitAt(unit.X + 1, unit.Y);
-        }
-        else if (steps[step] == DirectionEnum.BOTTOM)
-        {
-            target = bttlFld.GetUnitAt(unit.X, unit.Y - 1);
-        }
-        else if (steps[step] == DirectionEnum.LEFT)
-        {
-            target = bttlFld.GetUnitAt(unit.X - 1, unit.Y);
-        }
+            //Visually move unit
+            yield return StartCoroutine(unit.transform.Move(target.transform.position, duration));
 
-        //TODO Play animation
-        return DoAction(actions[step], unit, target);
+            //TODO unit assumes target position
+            //TODO Old unit position gains a blank unit
+            //Update unit position on battlefield
+            unit.OnItemPositionChanged(target.X, target.Y);
+
+            //TODO Play action animation and effects
+            DoAction(actions[step], unit, target);
+        }
     }
     
     public int NumberOfSteps {

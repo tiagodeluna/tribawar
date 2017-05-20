@@ -33,8 +33,31 @@
         set { this.ySize = value; }
     }
 
-    public Unit GetUnitAt(int x, int y)
+    public Unit GetUnitAt(Unit unit, DirectionEnum direction)
     {
+        int x = -1, y = -1;
+
+        if (direction == DirectionEnum.TOP)
+        {
+            x = unit.X;
+            y = unit.Y + 1;
+        }
+        else if (direction == DirectionEnum.RIGHT)
+        {
+            x = unit.X + 1;
+            y = unit.Y;
+        }
+        else if (direction == DirectionEnum.BOTTOM)
+        {
+            x = unit.X;
+            y = unit.Y - 1;
+        }
+        else if (direction == DirectionEnum.LEFT)
+        {
+            x = unit.X - 1;
+            y = unit.Y;
+        }
+
         if (x < 0 || x >= xSize || y < 0 || y >= ySize)
         {
             return null;
@@ -47,4 +70,5 @@
     {
         grid[unit.X, unit.Y] = unit;
     }
+
 }

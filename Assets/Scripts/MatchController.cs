@@ -39,12 +39,12 @@ public class MatchController {
 		int left = item.X - 1;
 		int right = item.X + 1;
 
-		while (left >= 0 && gridItems [left, item.Y].type == item.type) {
+		while (left >= 0 && gridItems [left, item.Y].Class == item.Class) {
 			hItems.Add (gridItems [left, item.Y]);
 			left--;
 		}
 
-		while (right < size && gridItems [right, item.Y].type == item.type) {
+		while (right < size && gridItems [right, item.Y].Class == item.Class) {
 			hItems.Add (gridItems [right, item.Y]);
 			right++;
 		}
@@ -57,12 +57,12 @@ public class MatchController {
 		int bottom = item.Y - 1;
 		int top = item.Y + 1;
 
-		while (bottom >= 0 && gridItems [item.X, bottom].type == item.type) {
+		while (bottom >= 0 && gridItems [item.X, bottom].Class == item.Class) {
 			vItems.Add (gridItems [item.X, bottom]);
 			bottom--;
 		}
 
-		while (top < size && gridItems [item.X, top].type == item.type) {
+		while (top < size && gridItems [item.X, top].Class == item.Class) {
 			vItems.Add (gridItems [item.X, top]);
 			top++;
 		}

@@ -41,23 +41,27 @@ public class Movement : MonoBehaviour {
         actions[3] = action4;
     }
 
-    public IEnumerator DoStep(int step, Unit unit, Battlefield bttlFld, float duration)
+    public DirectionEnum GetStepDirection(int step)
     {
-        //Obtain target position
-        Unit target = bttlFld.GetUnitAt(unit, steps[step]);
+        return steps[step];
+    }
+
+    public IEnumerator DoStep(int step, Unit unit, Battlefield bttlfld, float duration)
+    {
+        //Get target position
+        Unit target = bttlfld.GetUnitAt(unit, steps[step]);
 
         if (target != null)
         {
-            //Visually move unit
-            yield return StartCoroutine(unit.transform.Move(target.transform.position, duration));
+            //Cria espaço vazio na origem
+            bttlfld.InstantiateBlankAt(unit.transform.position, unit.X, unit.Y);
 
-            //TODO unit assumes target position
-            //TODO Old unit position gains a blank unit
-            //Update unit position on battlefield
-            unit.OnItemPositionChanged(target.X, target.Y);
+            //Visually move unit
+            StartCoroutine(unit.transform.Move(target.transform.position, duration));
+            yield return new WaitForSeconds(duration);
 
             //TODO Play action animation and effects
-            DoAction(actions[step], unit, target);
+            DoAction(actions[step], unit, target, bttlfld);
         }
     }
     
@@ -65,9 +69,43 @@ public class Movement : MonoBehaviour {
 		get { return numberOfSteps; }
 	}
     
-    bool DoAction(CommandEnum action, Unit unit, Unit target)
+    bool DoAction(CommandEnum action, Unit unit, Unit target, Battlefield bttlfld)
     {
-        //TODO
+        switch (action)
+        {
+            case CommandEnum.MEELEE_ATTACK:
+                unit.MeeleeAttack(target);
+                Debug.Log("Attack");
+                //Win
+                if (target.HP == 0)
+                {
+                    Debug.Log("Won! Destroying enemy...");
+                    //Ally assume posição do Enemy
+                    unit.OnItemPositionChanged(target.X, target.Y);
+                    //Destrói Enemy
+                    Destroy(target.gameObject);
+                    //Atualiza sprite de Ally
+                    unit = bttlfld.UpdateUnit(unit);
+                }
+                else //Lose
+                {
+                    Debug.Log("Lost! Destroying player...");
+                    //Destrói Ally
+                    Destroy(unit.gameObject);
+                    //Atualiza sprite de Enemy
+                    target = bttlfld.UpdateUnit(target);
+                }
+                break;
+            case CommandEnum.RANGE_ATTACK:
+                break;
+            case CommandEnum.CAST_SPELL:
+                break;
+            case CommandEnum.REVIVE:
+                break;
+            default:
+                break;
+        }
+
         return false;
     }
 
@@ -76,39 +114,6 @@ public class Movement : MonoBehaviour {
 		if (OnMouseOverItemEventHandler != null) {
 			OnMouseOverItemEventHandler (this);
 		}
-	}
-
-	void ExecuteStep(Unit unit, DirectionEnum direction, CommandEnum command) {
-		//TODO move to direction
-		//TODO command
-		switch(command) {
-		case CommandEnum.MEELEE_ATTACK:
-			unit.MeeleeAttack ();
-			break;
-		case CommandEnum.RANGE_ATTACK:
-			unit.RangeAttack();
-			break;
-		case CommandEnum.CAST_SPELL:
-			unit.CastSpell ();
-			break;
-		case CommandEnum.REVIVE:
-			unit.Revive();
-			break;
-		}
-			
-		/*
-		//Gets second item to swap
-		Unit item = GetItemAt (direction);
-		if (item != null) {
-			//Swaps the two selected items and tries to match them
-			StartCoroutine (TryMatch (currentSelectedItem, item));
-		}
-		else {
-			Debug.LogError ("You can't swap these items!");
-		}
-		currentSelectedItem = null;
-		*/
-
 	}
 
 	public delegate void OnMouseOverItem (Movement item);

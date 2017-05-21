@@ -80,9 +80,9 @@ public class GameManager : MonoBehaviour {
     //Unit selection
     void OnMouseOverItem(Unit item) {
 		//Enemy unit selected...
-		if (item.side == SideEnum.ENEMY) {
+		if (item.Side == SideEnum.ENEMY) {
 			Debug.LogError ("Hey, você não pode comandar unidades inimigas!");
-		} else if (item.side == SideEnum.ALLY) {
+		} else if (item.Side == SideEnum.ALLY) {
 			this.selectedUnits[0] = item;
 			Debug.Log ("Unidade selecionada!");
 			/*

@@ -3,14 +3,12 @@ using UnityEngine;
 
 public class MovementController : MonoBehaviour {
 
-    private const string GAME_OBJECT_NAME = "MovementController";
-    private const string PREFABS_FOLDER = "Prefabs/Movements";
     private const int NUMBER_OF_AVAILABLE_MOVEMENTS = 3;
     private const float STEP_DURATION = 0.6f;
 
-    [SerializeField] private LevelController levelController;
+    [SerializeField] private Battlefield battlefield;
 
-	private GameObject[] movementList;
+    private GameObject[] movementList;
     private Movement[] availableMovements;
 	private Movement selected;
 
@@ -26,7 +24,7 @@ public class MovementController : MonoBehaviour {
     /// <param name="levelNumber"></param>
     public void LoadMovements(int levelNumber)
     {
-        this.movementList = Resources.LoadAll<GameObject>(PREFABS_FOLDER);
+        this.movementList = Resources.LoadAll<GameObject>(PrefabsPath.MOVEMENTS);
     }
 
     /// <summary>
@@ -64,7 +62,7 @@ public class MovementController : MonoBehaviour {
         Debug.Log("Executing movement!");
 
         for (int step = 0; step < selected.NumberOfSteps; step++) {
-            StartCoroutine(ExecuteStep(step, units));
+            StartCoroutine( ExecuteStep(step, units) );
             yield return new WaitForSeconds(STEP_DURATION);
         }
 
@@ -78,30 +76,31 @@ public class MovementController : MonoBehaviour {
 
     void ReloadMovements()
     {
-        Vector3 posicao = GameObject.Find(GAME_OBJECT_NAME).transform.position;
+        Vector3 posicao = this.transform.position;
         GameObject randomMov = this.movementList[Random.Range(0, this.movementList.Length)];
         availableMovements[0] = Instantiate(randomMov, posicao, Quaternion.identity).GetComponent<Movement>();
     }
 
     private IEnumerator ExecuteStep(int step, Unit[] units)
     {
+        //int x, y;
         //Move units one by one
         for (int i = 0; i < units.Length; i++)
         {
             if (units[i] != null)
             {
-                Unit unitAtPosition = this.levelController.BattleField.Grid[units[i].X, units[i].Y];
-                if (units[i].Equals(unitAtPosition))
-                {
-                    this.levelController.CreateBlankUnit(units[i]);
-                }
+                //x = units[i].X;
+                //y = units[i].Y;
+                //if (selected.GetStepDirection(step) != DirectionEnum.NONE)
+                //{
+                //    this.battlefield.CreateBlankUnit(units[i]);
+                //}
 
                 //TODO This is a Coroutine/Thread
-                yield return StartCoroutine( selected.DoStep(step, units[i], this.levelController.BattleField, STEP_DURATION) );
+                yield return StartCoroutine( selected.DoStep(step, units[i], this.battlefield, STEP_DURATION) );
             }
-
-            //TODO Check if unit is alive
-            //units[i].DestroyIfKilled(bttlFld);
         }
     }
+
+
 }

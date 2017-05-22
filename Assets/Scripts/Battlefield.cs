@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor;
+using UnityEngine;
 
 public class Battlefield : MonoBehaviour {
 
@@ -60,10 +61,15 @@ public class Battlefield : MonoBehaviour {
         InstantiateUnit(PrefabsID.BLANK, position, x, y);
     }
 
-    public Unit UpdateUnit(Unit unit)
+    public void UpdateUnit(Unit oldUnit)
     {
-        int id = PrefabsID.GetId(unit.Side, unit.Class, unit.HP);
-        return InstantiateUnit(id, unit.transform.position, unit.X, unit.Y);
+        //Get id and create new unit
+        int id = PrefabsID.GetId(oldUnit.Side, oldUnit.Class, oldUnit.HP);
+        Unit unit = InstantiateUnit(id, oldUnit.transform.position, oldUnit.X, oldUnit.Y);
+        //Update object in the grid
+        grid[unit.X, unit.Y] = unit;
+        //Destroy old object
+        Destroy(oldUnit.gameObject);
     }
 
     public Unit GetUnitAt(Unit unit, DirectionEnum direction)

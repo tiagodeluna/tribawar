@@ -83,18 +83,13 @@ public class MovementController : MonoBehaviour {
 
     private IEnumerator ExecuteStep(int step, Unit[] units)
     {
-        //int x, y;
         //Move units one by one
         for (int i = 0; i < units.Length; i++)
         {
             if (units[i] != null)
             {
-                //x = units[i].X;
-                //y = units[i].Y;
-                //if (selected.GetStepDirection(step) != DirectionEnum.NONE)
-                //{
-                //    this.battlefield.CreateBlankUnit(units[i]);
-                //}
+                //Update unit reference from the grid
+                units[i] = this.battlefield.Grid[units[i].X, units[i].Y];
 
                 //TODO This is a Coroutine/Thread
                 yield return StartCoroutine( selected.DoStep(step, units[i], this.battlefield, STEP_DURATION) );

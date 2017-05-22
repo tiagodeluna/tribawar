@@ -53,7 +53,7 @@ public class Movement : MonoBehaviour {
 
         if (target != null)
         {
-            //Cria espaço vazio na origem
+            //Create blank space at the initial position
             bttlfld.InstantiateBlankAt(unit.transform.position, unit.X, unit.Y);
 
             //Visually move unit
@@ -75,25 +75,22 @@ public class Movement : MonoBehaviour {
         {
             case CommandEnum.MEELEE_ATTACK:
                 unit.MeeleeAttack(target);
-                Debug.Log("Attack");
                 //Win
                 if (target.HP == 0)
                 {
-                    Debug.Log("Won! Destroying enemy...");
-                    //Ally assume posição do Enemy
+                    //Unit assumes enemy's position
                     unit.OnItemPositionChanged(target.X, target.Y);
-                    //Destrói Enemy
+                    //Destroy enemy
                     Destroy(target.gameObject);
-                    //Atualiza sprite de Ally
-                    unit = bttlfld.UpdateUnit(unit);
+                    //Update unit GameObject
+                    bttlfld.UpdateUnit(unit);
                 }
                 else //Lose
                 {
-                    Debug.Log("Lost! Destroying player...");
-                    //Destrói Ally
+                    //Destroy unit
                     Destroy(unit.gameObject);
-                    //Atualiza sprite de Enemy
-                    target = bttlfld.UpdateUnit(target);
+                    //Update target GameObject
+                    bttlfld.UpdateUnit(target);
                 }
                 break;
             case CommandEnum.RANGE_ATTACK:
